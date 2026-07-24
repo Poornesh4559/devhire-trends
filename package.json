@@ -1,0 +1,22 @@
+{
+  "name": "devhire-trends",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "start": "wrangler dev",
+    "cf-typegen": "wrangler types",
+    "db:migrate": "wrangler d1 migrations apply devhire-db",
+    "db:migrate:local": "wrangler d1 migrations apply devhire-db --local"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "hono": "^4.4.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240722.0",
+    "typescript": "^5.5.0",
+    "wrangler": "^3.65.0"
+  }
+}

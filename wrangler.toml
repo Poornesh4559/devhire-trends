@@ -1,0 +1,16 @@
+name = "devhire-trends"
+main = "src/index.ts"
+compatibility_date = "2024-07-01"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "devhire-db"
+database_id = "41da844d-3be7-49f0-95e6-d6e421d46005"
+
+[[kv_namespaces]]
+binding = "METADATA"
+id = "930048ddc2d842408a96d8f3b4f780b7"
+
+[[triggers]]
+crons = ["0 6 1 * *"]
