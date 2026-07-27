@@ -98,6 +98,20 @@ npm run dev
 
 That runs Vite only on `http://localhost:5173` and does not automatically wire the Worker backend.
 
+## Deploying to Cloudflare
+
+When deploying, the Worker build must include the generated `dist/client` assets directory.
+
+Use this command in your Cloudflare build step or local shell:
+
+```bash
+npm run deploy
+```
+
+This runs the Vite build first and then invokes Wrangler.
+
+If Cloudflare is executing `npx wrangler deploy` directly, it will fail unless `npm run build` has already created `dist/client`.
+
 ## Notes
 
 - Use `http://127.0.0.1:8790` for the full Worker app.

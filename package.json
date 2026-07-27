@@ -6,9 +6,9 @@
   "scripts": {
     "build": "vite build",
     "check": "tsc --noEmit && vite build",
-    "deploy": "npm run build && wrangler deploy",
+    "deploy": "npm run build && npx wrangler deploy",
     "dev": "vite dev",
-    "preview": "npm run build && wrangler dev",
+    "preview": "npm run build && npx wrangler dev",
     "test": "vitest run",
     "types": "wrangler types",
     "db:migrate:local": "wrangler d1 migrations apply datarole-radar-db --local",
