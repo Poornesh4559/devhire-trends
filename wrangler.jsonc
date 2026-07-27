@@ -1,0 +1,55 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "datarole-radar",
+	"main": "src/worker/index.ts",
+	"compatibility_date": "2026-07-27",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"assets": {
+		"directory": "./dist/client",
+		"binding": "ASSETS",
+		"not_found_handling": "single-page-application",
+		"run_worker_first": [
+			"/api/*"
+		]
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "datarole-radar-db",
+			"database_id": "61f68394-a023-4fb7-acbe-e80407a0ee09",
+			"migrations_dir": "migrations"
+		},
+		{
+			"binding": "datarole_radar_db",
+			"database_name": "datarole-radar-db",
+			"database_id": "61f68394-a023-4fb7-acbe-e80407a0ee09",
+			"remote": true
+		}
+	],
+	"vars": {
+		"GEMINI_MODEL": "gemini-3.6-flash"
+	},
+	"triggers": {
+		"crons": [
+			"0 2 * * *"
+		]
+	},
+	"routes": [
+		{
+			"pattern": "jobs.poornesh.dev",
+			"custom_domain": true
+		}
+	],
+	"observability": {
+		"enabled": true,
+		"logs": {
+			"head_sampling_rate": 1
+		},
+		"traces": {
+			"enabled": true,
+			"head_sampling_rate": 0.1
+		}
+	}
+}
