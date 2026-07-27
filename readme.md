@@ -118,4 +118,4 @@ If Cloudflare is executing `npx wrangler deploy` directly, it will fail unless `
 - `npm run dev` is useful only for UI development.
 - Ensure `wrangler.jsonc` has the real `database_id` from the `wrangler d1 create` command.
 - Set `INGEST_API_KEY` in your environment to use `/api/ingest` and `/api/sources/:id/sync` securely.
-- If you want, you can also point frontend API calls to the Worker URL instead of `localhost:5173`.
+- If you want, you can also point frontend API calls to  the Worker URL instead of `localhost:5173`.
