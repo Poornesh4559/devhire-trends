@@ -12,5 +12,5 @@ database_id = "41da844d-3be7-49f0-95e6-d6e421d46005"
 binding = "METADATA"
 id = "930048ddc2d842408a96d8f3b4f780b7"
 
-[[triggers]]
+[triggers]
 crons = ["0 6 1 * *"]
