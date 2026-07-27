@@ -158,6 +158,7 @@ export function renderDashboard(trends: any[], latestMonth: string | null) {
 
     <div class="card" style="margin-bottom: 2rem;">
       <h2>Quick Actions</h2>
+      <input type="password" class="search-box" id="scrapeSecret" placeholder="Admin scrape secret" autocomplete="current-password">
       <button class="btn" onclick="triggerScrape()">Scrape Current Month</button>
       <button class="btn btn-secondary" onclick="loadTechTrends()">View Tech Trends</button>
       <div id="actionResult" style="margin-top: 1rem; color: #94a3b8;"></div>
@@ -289,12 +290,31 @@ export function renderDashboard(trends: any[], latestMonth: string | null) {
 
         async function triggerScrape() {
           const result = document.getElementById('actionResult');
+          const secret = document.getElementById('scrapeSecret').value;
+          if (!secret) {
+            result.textContent = 'Enter the admin scrape secret first.';
+            return;
+          }
           result.textContent = 'Scraping in progress...';
 
           try {
-            const res = await fetch('/api/scrape', { method: 'POST', headers: { 'Authorization': 'Bearer dev-scrape-key' } });
-            const data = await res.json();
-            result.textContent = data.message || (res.ok ? 'Done!' : 'Scrape failed');
+            const res = await fetch('/api/scrape', {
+              method: 'POST',
+              headers: { 'Authorization': 'Bearer ' + secret }
+            });
+            const responseText = await res.text();
+            let data;
+            try {
+              data = JSON.parse(responseText);
+            } catch {
+              data = { error: responseText };
+            }
+
+            if (!res.ok) {
+              throw new Error(data.error || data.message || 'Scrape failed (' + res.status + ')');
+            }
+
+            result.textContent = data.message || 'Done!';
           } catch (error) {
             result.textContent = error.message || 'Scrape failed';
           }

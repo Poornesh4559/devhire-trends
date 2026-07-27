@@ -63,8 +63,10 @@ app.get('/api/tech-trends', async (c) => {
   return c.json({ month, tech: sorted });
 });
 
-const scrapeAuth = bearerAuth({
-  verifyToken: (token, c) => token === (c.env.SCRAPE_SECRET || 'dev-scrape-key')
+const scrapeAuth = bearerAuth<{ Bindings: Env }>({
+  verifyToken: (token, c) => token === (c.env.SCRAPE_SECRET || 'dev-scrape-key'),
+  noAuthenticationHeader: { message: { error: 'Scrape secret required' } },
+  invalidToken: { message: { error: 'Invalid scrape secret' } }
 });
 
 app.post('/api/scrape', scrapeAuth, async (c) => {
