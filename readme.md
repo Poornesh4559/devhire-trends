@@ -112,6 +112,24 @@ This runs the Vite build first and then invokes Wrangler.
 
 If Cloudflare is executing `npx wrangler deploy` directly, it will fail unless `npm run build` has already created `dist/client`.
 
+## Remote D1 setup
+
+Your deployed Worker also needs the remote D1 schema. If the remote database was created but not migrated, the app will return 500 errors.
+
+Run:
+
+```bash
+npx wrangler d1 migrations apply datarole-radar-db --remote
+```
+
+If the remote database has already been created and you need to seed it as well, run:
+
+```bash
+npx wrangler d1 execute datarole-radar-db --remote --file=migrations/0002_seed.sql
+```
+
+If the remote database is empty, the first command alone will create the tables and execute the seed migration.
+
 ## Notes
 
 - Use `http://127.0.0.1:8790` for the full Worker app.
