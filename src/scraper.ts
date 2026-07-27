@@ -2,9 +2,6 @@ import * as cheerio from 'cheerio';
 import type { D1Database, KVNamespace } from '@cloudflare/workers-types';
 import { insertJob } from './db';
 
-const HN_API_BASE = 'https://hacker-news.firebaseio.com/v0';
-const HN_WEB_BASE = 'https://news.ycombinator.com';
-
 const HIRING_THREAD_TITLES = [
   'who is hiring',
   "who's hiring",
@@ -51,41 +48,26 @@ export async function findHiringThread(monthStr: string): Promise<number | null>
 }
 
 async function fetchThreadComments(threadId: number): Promise<Array<{ id: number; text: string; time: number; by: string }>> {
-  const comments: Array<{ id: number; text: string; time: number; by: string }> = [];
-  
-  async function fetchItem(id: number) {
-    const res = await fetch(`${HN_API_BASE}/item/${id}.json`);
-    if (!res.ok) return;
-    const item = await res.json() as { kids?: number[]; text?: string; time?: number; by?: string; id: number; deleted?: boolean; dead?: boolean };
-    
-    if (!item || item.deleted || item.dead) return;
-    
-    if (item.text && item.by && item.by !== 'whoishiring') {
-      comments.push({
-        id: item.id,
-        text: item.text,
-        time: item.time || 0,
-        by: item.by
-      });
-    }
-    
-    if (item.kids) {
-      await Promise.all(item.kids.map(kidId => fetchItem(kidId)));
-    }
-  }
-  
-  const threadRes = await fetch(`${HN_API_BASE}/item/${threadId}.json`);
-  const thread = await threadRes.json() as { kids?: number[] };
-  
-  if (thread.kids) {
-    const batchSize = 10;
-    for (let i = 0; i < thread.kids.length; i += batchSize) {
-      const batch = thread.kids.slice(i, i + batchSize);
-      await Promise.all(batch.map(id => fetchItem(id)));
-    }
-  }
-  
-  return comments;
+  const response = await fetch(`https://hn.algolia.com/api/v1/items/${threadId}`);
+  if (!response.ok) return [];
+
+  const thread = await response.json() as {
+    children?: Array<{
+      id: number;
+      text?: string;
+      author?: string;
+      created_at_i?: number;
+    }>;
+  };
+
+  return (thread.children || [])
+    .filter((comment) => comment.text && comment.author && comment.author !== 'whoishiring')
+    .map((comment) => ({
+      id: comment.id,
+      text: comment.text!,
+      time: comment.created_at_i || 0,
+      by: comment.author!
+    }));
 }
 
 function parseJobComment(comment: { id: number; text: string; time: number; by: string }): ScrapedJob {
